@@ -1,4 +1,4 @@
-﻿# Layer contributed by dsh-local-proxy.
+﻿# Layer contributed by dsh-proxy-port.
 #
 # One row, inserted before the profile's own rows so the policy is installed as
 # early as the plugin graph allows. These values are the shipped defaults.
@@ -10,8 +10,8 @@
 # The command writes local-proxy.json in the profile directory, which overrides
 # the matching keys below, so nobody edits this file to change a port.
 - insert:
-    - id: dsh-local-proxy
-      name: dsh-local-proxy
+    - id: dsh-proxy-port
+      name: dsh-proxy-port
       config:
         enabled: true
         host: 127.0.0.1

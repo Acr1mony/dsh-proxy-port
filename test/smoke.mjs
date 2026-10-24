@@ -11,7 +11,7 @@
  *   - requests really traverse the proxy, and
  *   - the disposer restores both the route and the environment.
  *
- * Run: node dsh-local-proxy/test/smoke.mjs
+ * Run: node dsh-proxy-port/test/smoke.mjs
  */
 
 import assert from 'node:assert/strict';

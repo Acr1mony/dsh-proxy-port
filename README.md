@@ -1,4 +1,4 @@
-﻿# dsh-local-proxy
+﻿# dsh-proxy-port
 
 English | [中文](./README.zh.md)
 
@@ -33,26 +33,51 @@ Loopback addresses always bypass the proxy. SOCKS and PAC are rejected by that m
 
 Requirements:
 
-- DeepSeek Harness desktop (the Electron build; the plugin locates the application archive to reach the host's own modules).
-- Node `^22.19 || >=24` inside that app.
+- DeepSeek Harness desktop `^0.2.1-rc.2` — the Electron build; the plugin locates the application archive to reach the host's own modules.
 - A local HTTP proxy that speaks `CONNECT` (Clash, Clash Verge, v2ray, mitmproxy, …).
 
-### A. Register as a profile bundle (recommended)
+The package declares `engines.dsh`, so a host outside that range refuses it at install time instead of loading it into a silent direct route.
 
-A profile plugin is a bundle: the plugin page lists bundles, so a bare loader row never appears there. From a checkout at `E:\path\to\dsh-local-proxy`, edit `~/.dsh/profiles/<profile>/package.json` (on the desktop build the profile is `desktop`):
+### A. From npm (recommended)
+
+Use the plugin page's install dialog, or the `plugin_manager` tool with `install_bundle`:
+
+```text
+dsh-proxy-port@0.1.0
+```
+
+Registry installs are pinned exactly (`saveExact`) and checked against `engines` before anything is downloaded.
+
+### B. From a git checkout
+
+The same dialog accepts a pnpm git spec:
+
+```text
+github:Acr1mony/dsh-proxy-port#<commit>
+git@github.com:Acr1mony/dsh-proxy-port.git#<commit>
+file:/path/to/dsh-proxy-port
+```
+
+Pin a commit rather than a branch: this plugin drives a process-wide policy, so "whatever `main` was that day" is a bad thing to have written down.
+
+Before pnpm starts, the manager probes github.com with `git ls-remote` (5 s, credential helpers disabled). When the probe fails, the dialog reports `failedAt: 'spec-host'` and offers a registry mirror — which cannot help a git dependency. On such a host use the SSH form, or `file:` against a local checkout.
+
+### C. By hand, through profile files
+
+A profile plugin is a bundle: the plugin page lists bundles, so a bare loader row never appears there. From a checkout at `/path/to/dsh-proxy-port`, edit `~/.dsh/profiles/<profile>/package.json` (on the desktop build the profile is `desktop`):
 
 ```jsonc
 {
-  "dependencies": { "dsh-local-proxy": "file:E:\\path\\to\\dsh-local-proxy" },
-  "dsh": { "profile": { "bundles": ["…", "dsh-local-proxy"] } }
+  "dependencies": { "dsh-proxy-port": "file:/path/to/dsh-proxy-port" },
+  "dsh": { "profile": { "bundles": ["…", "dsh-proxy-port"] } }
 }
 ```
 
 Add a row override in the same directory's `cordis.patch.yml` — the row itself comes from this package's `cordis.patch.yml`, the profile only overrides defaults:
 
 ```yaml
-- id: dsh-local-proxy
-  name: dsh-local-proxy
+- id: dsh-proxy-port
+  name: dsh-proxy-port
   config:
     enabled: true
     host: 127.0.0.1
@@ -63,11 +88,15 @@ Add a row override in the same directory's `cordis.patch.yml` — the row itself
     verifyUrl: https://example.com/
 ```
 
-Restart the application.
+Then install the dependency with the pnpm that ships inside the app (`resources/runtime/primary-runtime/dependencies/pnpm/bin/pnpm.cjs install`) and restart.
 
-### B. Let DSH install it
+`dsh plugin --profile desktop add …` is not an alternative here: the desktop profile is managed exclusively by the Electron application and the CLI refuses it.
 
-Ask the `plugin_manager` tool to run `install_bundle` with `spec: "file:E:\\path\\to\\dsh-local-proxy"`. The `file:` spec is written into dependencies verbatim, and because this package declares `dsh.bundle.patch`, `reconcile()` also adds it to `dsh.profile.bundles`. This needs `danger-full-access` or manual approval, and still needs a restart.
+Restart the application — without HMR the newly installed bundle is only loaded on the next start — then pick the port:
+
+```text
+/proxy 7897
+```
 
 ## Usage
 

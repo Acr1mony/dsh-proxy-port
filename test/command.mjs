@@ -7,7 +7,7 @@
  * and `profileContext`. Everything below asserts observable behavior: the route
  * `web_fetch` would take, the text the composer shows, and the state file.
  *
- * Run: node dsh-local-proxy/test/command.mjs
+ * Run: node dsh-proxy-port/test/command.mjs
  */
 
 import assert from 'node:assert/strict';
@@ -28,7 +28,7 @@ const proxy = http.createServer((_request, response) => response.end('ok'));
 await new Promise((resolve) => proxy.listen(0, '127.0.0.1', resolve));
 const proxyPort = proxy.address().port;
 
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-local-proxy-command-'));
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-proxy-port-command-'));
 
 /**
  * Mount the plugin against a fake host.

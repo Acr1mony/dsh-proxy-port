@@ -1,54 +1,57 @@
 {
-	"name": "dsh-local-proxy",
-	"version": "0.1.0",
-	"private": true,
-	"description": "use \"/proxy port\" to route DeepSeek Harness network operations through a local HTTP proxy (127.0.0.1:port), configurable at runtime",
-	"type": "module",
-	"main": "lib/index.js",
-	"exports": {
-		".": {
-			"default": "./lib/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"files": [
-		"lib",
-		"cordis.patch.yml",
-		"README.md",
-		"README.zh.md",
-		"LICENSE"
-	],
-	"dsh": {
-		"bundle": {
-			"patch": "./cordis.patch.yml"
-		}
-	},
-	"peerDependencies": {
-		"@deepseek-ai/cordis": "*"
-	},
-	"peerDependenciesMeta": {
-		"@deepseek-ai/cordis": {
-			"optional": true
-		}
-	},
-	"engines": {
-		"node": "^22.19 || >=24"
-	},
-	"author": "Acr1mony",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Acr1mony/dsh-local-proxy.git"
-	},
-	"homepage": "https://github.com/Acr1mony/dsh-local-proxy#readme",
-	"bugs": {
-		"url": "https://github.com/Acr1mony/dsh-local-proxy/issues"
-	},
-	"keywords": [
-		"dsh",
-		"deepseek-harness",
-		"plugin",
-		"proxy",
-		"http-proxy"
-	],
-	"license": "MIT"
+  "name": "dsh-proxy-port",
+  "version": "0.1.0",
+  "description": "use \"/proxy port\" to route DeepSeek Harness network operations through a local HTTP proxy (127.0.0.1:port), configurable at runtime",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19 || >=24",
+    "dsh": "^0.2.1-rc.2"
+  },
+  "author": "Acr1mony",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Acr1mony/dsh-proxy-port.git"
+  },
+  "homepage": "https://github.com/Acr1mony/dsh-proxy-port#readme",
+  "bugs": {
+    "url": "https://github.com/Acr1mony/dsh-proxy-port/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "proxy",
+    "http-proxy"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

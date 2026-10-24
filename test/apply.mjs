@@ -5,7 +5,7 @@
  * `tools`, `apply(ctx, config)` must register the tool and hand its activation
  * back through `ctx.effect()`, and disposing that effect must restore the route.
  *
- * Run: node dsh-local-proxy/test/apply.mjs
+ * Run: node dsh-proxy-port/test/apply.mjs
  */
 
 import assert from 'node:assert/strict';
@@ -21,14 +21,14 @@ process.env.DSH_APP_ASAR = fixtureRoot();
 const plugin = await import('../lib/index.js');
 const { isInstalled, routeFor } = await import('../lib/policy.js');
 
-assert.equal(plugin.name, 'dsh-local-proxy');
+assert.equal(plugin.name, 'dsh-proxy-port');
 assert.deepEqual(plugin.inject, ['tools']);
 assert.equal(typeof plugin.apply, 'function');
 
 const proxy = http.createServer((_request, response) => response.end('ok'));
 await new Promise((resolve) => proxy.listen(0, '127.0.0.1', resolve));
 
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-local-proxy-'));
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-proxy-port-'));
 const registered = [];
 const commands = {
 	list: [],

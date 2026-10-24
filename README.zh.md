@@ -1,4 +1,4 @@
-﻿# dsh-local-proxy
+﻿# dsh-proxy-port
 
 [English](./README.md) | 中文
 
@@ -35,26 +35,51 @@
 
 环境要求：
 
-- DeepSeek Harness 桌面版（Electron 构建；插件要定位应用归档才能拿到宿主自己的模块）；
-- 该应用内置 Node `^22.19 || >=24`；
+- DeepSeek Harness 桌面版 `^0.2.1-rc.2`（Electron 构建；插件要定位应用归档才能拿到宿主自己的模块）；
 - 一个支持 `CONNECT` 的本地 HTTP 代理（Clash、Clash Verge、v2ray、mitmproxy 等）。
 
-### A. 注册成 profile bundle（推荐）
+包内声明了 `engines.dsh`：范围外的主机会在**安装时**被拒，而不是加载进来静默退回直连。
 
-profile 插件就是一个 bundle：侧栏「插件」页只列 bundle，裸的 loader 行不会出现在那里。假设源码在 `E:\path\to\dsh-local-proxy`，编辑 `~/.dsh/profiles/<profile>/package.json`（桌面版 profile 名为 `desktop`）：
+### A. 从 npm（推荐）
+
+用侧栏「插件」页的安装框，或对 `plugin_manager` 工具执行 `install_bundle`：
+
+```text
+dsh-proxy-port@0.1.0
+```
+
+走注册表的安装会精确固定版本（`saveExact`），并在下载任何东西之前先校验 `engines`。
+
+### B. 从 git 仓库
+
+同一个安装框也接受 pnpm 的 git spec：
+
+```text
+github:Acr1mony/dsh-proxy-port#<commit>
+git@github.com:Acr1mony/dsh-proxy-port.git#<commit>
+file:/path/to/dsh-proxy-port
+```
+
+请钉一个 commit 而不是分支：这个插件驱动的是进程级策略，"那天 main 上是什么"不是个适合写进依赖的东西。
+
+pnpm 启动前，管理器会对 github.com 跑一次 `git ls-remote`（5 秒超时，禁用凭据助手）。探活失败时对话框报 `failedAt: 'spec-host'`，并建议换注册表镜像 —— 那对 git 依赖没有帮助。这类机器请改用 SSH 形式，或对本地克隆用 `file:`。
+
+### C. 手改 profile 文件
+
+profile 插件就是一个 bundle：侧栏「插件」页只列 bundle，裸的 loader 行不会出现在那里。假设源码在 `/path/to/dsh-proxy-port`，编辑 `~/.dsh/profiles/<profile>/package.json`（桌面版 profile 名为 `desktop`）：
 
 ```jsonc
 {
-  "dependencies": { "dsh-local-proxy": "file:E:\\path\\to\\dsh-local-proxy" },
-  "dsh": { "profile": { "bundles": ["…", "dsh-local-proxy"] } }
+  "dependencies": { "dsh-proxy-port": "file:/path/to/dsh-proxy-port" },
+  "dsh": { "profile": { "bundles": ["…", "dsh-proxy-port"] } }
 }
 ```
 
 在同目录的 `cordis.patch.yml` 里加一条行覆盖 —— 行本身由本包自己的 `cordis.patch.yml` 提供，profile 只覆盖默认值：
 
 ```yaml
-- id: dsh-local-proxy
-  name: dsh-local-proxy
+- id: dsh-proxy-port
+  name: dsh-proxy-port
   config:
     enabled: true
     host: 127.0.0.1
@@ -65,12 +90,15 @@ profile 插件就是一个 bundle：侧栏「插件」页只列 bundle，裸的 
     verifyUrl: https://example.com/
 ```
 
-重启应用。
+然后用应用自带的 pnpm 安装依赖（`resources/runtime/primary-runtime/dependencies/pnpm/bin/pnpm.cjs install`），再重启。
 
-### B. 让 DSH 自己装
+`dsh plugin --profile desktop add …` 不是替代方案：desktop profile 由 Electron 应用独占管理，CLI 会直接拒绝。
 
-对 `plugin_manager` 工具执行 `install_bundle`，`spec: "file:E:\\path\\to\\dsh-local-proxy"`。
-`file:` 形式的 spec 会被原样写进依赖；又因为本包声明了 `dsh.bundle.patch`，`reconcile()` 会把它同时加进 `dsh.profile.bundles`。这条路径需要 `danger-full-access` 或人工批准，并且同样要重启。
+重启应用 —— 没有 HMR 时新装的 bundle 只在下次启动加载 —— 然后选端口：
+
+```text
+/proxy 7897
+```
 
 ## 用法
 
