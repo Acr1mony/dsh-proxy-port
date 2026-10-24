@@ -1,0 +1,22 @@
+﻿# Layer contributed by dsh-local-proxy.
+#
+# One row, inserted before the profile's own rows so the policy is installed as
+# early as the plugin graph allows. These values are the shipped defaults.
+#
+# The port is changed at runtime, from the composer:
+#   /proxy 7897            # use 127.0.0.1:7897 now and from the next start
+#   /proxy status          # which proxy is in force, and whether web_fetch uses it
+#   /proxy off             # uninstall the policy; every request goes direct
+# The command writes local-proxy.json in the profile directory, which overrides
+# the matching keys below, so nobody edits this file to change a port.
+- insert:
+    - id: dsh-local-proxy
+      name: dsh-local-proxy
+      config:
+        enabled: true
+        host: 127.0.0.1
+        port: 7890
+        proxyUrl: ''
+        noProxy: ''
+        childNodes: true
+        verifyUrl: https://example.com/
