@@ -121,8 +121,6 @@ profile 插件就是一个 bundle：侧栏「插件」页只列 bundle，裸的 
 | `childNodes` | `true` | 为子进程发布代理变量以及 `NODE_USE_ENV_PROXY=1` |
 | `verifyUrl` | `https://example.com/` | `status` / `diagnose` / `test` 默认使用的目标 |
 
-这些字段刻意**不是** volatile 的：volatile 字段会让 DSH 在该行旁渲染一张配置表单，而一个端口有两个编辑器，正是"我改了但没生效"的来源。
-
 ## 测试
 
 ```bash
