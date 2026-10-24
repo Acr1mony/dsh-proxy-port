@@ -1,4 +1,4 @@
-﻿# dsh-proxy-port
+# dsh-proxy-port
 
 [English](./README.md) | 中文
 
@@ -40,29 +40,34 @@
 
 包内声明了 `engines.dsh`：范围外的主机会在**安装时**被拒，而不是加载进来静默退回直连。
 
-### A. 从 npm（推荐）
+### A. 从 GitHub（推荐）
 
-用侧栏「插件」页的安装框，或对 `plugin_manager` 工具执行 `install_bundle`：
-
-```text
-dsh-proxy-port@0.1.0
-```
-
-走注册表的安装会精确固定版本（`saveExact`），并在下载任何东西之前先校验 `engines`。
-
-### B. 从 git 仓库
-
-同一个安装框也接受 pnpm 的 git spec：
+侧栏「插件」页的安装框和 `plugin_manager` 工具的 `install_bundle` 都接受 pnpm 的 git spec。仓库根目录**就是**包本体，所以下面这条就是全部安装步骤：
 
 ```text
 github:Acr1mony/dsh-proxy-port#<commit>
 git@github.com:Acr1mony/dsh-proxy-port.git#<commit>
-file:/path/to/dsh-proxy-port
 ```
+
+没有 npm 发布版本：仓库就是分发渠道。
 
 请钉一个 commit 而不是分支：这个插件驱动的是进程级策略，"那天 main 上是什么"不是个适合写进依赖的东西。
 
-pnpm 启动前，管理器会对 github.com 跑一次 `git ls-remote`（5 秒超时，禁用凭据助手）。探活失败时对话框报 `failedAt: 'spec-host'`，并建议换注册表镜像 —— 那对 git 依赖没有帮助。这类机器请改用 SSH 形式，或对本地克隆用 `file:`。
+pnpm 启动前，管理器会对 github.com 跑一次 `git ls-remote`（5 秒超时，禁用凭据助手）。探活失败时对话框报 `failedAt: 'spec-host'`，并建议换注册表镜像 —— 那对 git 依赖没有帮助。这类机器请改用 SSH 形式，或下面的本地克隆。
+
+另外，大批量抓取也需要一条能通到 github.com 的路。如果 `git clone` 这个仓库中途失败（`invalid index-pack output`、`Connection was reset`），先把 git 指到本地代理：
+
+```bash
+git config --global http.https://github.com.proxy http://127.0.0.1:7890
+```
+
+### B. 从本地克隆
+
+```text
+file:/path/to/dsh-proxy-port
+```
+
+这种方式是链接而不是复制，改完代码下次启动就生效。
 
 ### C. 手改 profile 文件
 

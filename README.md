@@ -1,4 +1,4 @@
-﻿# dsh-proxy-port
+# dsh-proxy-port
 
 English | [中文](./README.zh.md)
 
@@ -38,29 +38,34 @@ Requirements:
 
 The package declares `engines.dsh`, so a host outside that range refuses it at install time instead of loading it into a silent direct route.
 
-### A. From npm (recommended)
+### A. From GitHub (recommended)
 
-Use the plugin page's install dialog, or the `plugin_manager` tool with `install_bundle`:
-
-```text
-dsh-proxy-port@0.1.0
-```
-
-Registry installs are pinned exactly (`saveExact`) and checked against `engines` before anything is downloaded.
-
-### B. From a git checkout
-
-The same dialog accepts a pnpm git spec:
+The plugin page's install dialog and the `plugin_manager` tool both accept a pnpm git spec. The repository root *is* the package, so this is the entire install:
 
 ```text
 github:Acr1mony/dsh-proxy-port#<commit>
 git@github.com:Acr1mony/dsh-proxy-port.git#<commit>
-file:/path/to/dsh-proxy-port
 ```
+
+There is no npm release: the repository is the distribution channel.
 
 Pin a commit rather than a branch: this plugin drives a process-wide policy, so "whatever `main` was that day" is a bad thing to have written down.
 
-Before pnpm starts, the manager probes github.com with `git ls-remote` (5 s, credential helpers disabled). When the probe fails, the dialog reports `failedAt: 'spec-host'` and offers a registry mirror — which cannot help a git dependency. On such a host use the SSH form, or `file:` against a local checkout.
+Before pnpm starts, the manager probes github.com with `git ls-remote` (5 s, credential helpers disabled). When the probe fails, the dialog reports `failedAt: 'spec-host'` and suggests a registry mirror, which cannot help a git dependency — use the SSH form instead, or a local checkout below.
+
+Bulk fetches also need a working route to github.com. If a plain `git clone` of this repository dies partway through (`invalid index-pack output`, `Connection was reset`), point git at your local proxy first:
+
+```bash
+git config --global http.https://github.com.proxy http://127.0.0.1:7890
+```
+
+### B. From a local checkout
+
+```text
+file:/path/to/dsh-proxy-port
+```
+
+The checkout is linked rather than copied, so edits take effect on the next launch.
 
 ### C. By hand, through profile files
 
