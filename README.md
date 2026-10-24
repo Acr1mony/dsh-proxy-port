@@ -118,8 +118,6 @@ Row config keys, all optional:
 | `childNodes` | `true` | Publish the proxy variables plus `NODE_USE_ENV_PROXY=1` for child processes |
 | `verifyUrl` | `https://example.com/` | Target that `status` / `diagnose` / `test` use by default |
 
-The fields are deliberately **not** volatile: a live setting would make DSH render a configuration form next to the row, and two editors for one port is how "I changed it and nothing happened" starts.
-
 ## Tests
 
 ```bash
